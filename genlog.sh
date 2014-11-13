@@ -170,7 +170,7 @@ function _osprobe {
 	    ;;
 	  debian)
 	    _packageman=_apt
-	    if [ $VERSION_ID > 7 ]; then
+	    if [ $VERSION_ID -gt 7 ]; then
 	      INIT="systemd"
 	    else
 	      INIT="init.d"  
