@@ -941,7 +941,7 @@ function _firmware {
   local i var="Firmware"
   _prompt "$var"
   nome_e_riga "$var"
-  $_packageman "ricercalocale" "firmware" >> "$log" && _ok
+  $_packageman "ricercalocale" "firmware" >> "$log" && _ok || _error
   echo >> "$log"
 
   # Elenca i file contenuti nelle directory specificate
