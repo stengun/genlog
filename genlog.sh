@@ -637,6 +637,8 @@ function _emerge {
 	  _comando "$_equery list \'*\'" # Lista tutti i pacchetti installati
 	  _file "/etc/portage/package.use" # USE flags per pacchetto
 	  _file "/etc/portage/package.license" # File per includere software closed-source nel sistema
+      _file "/etc/portage/package.mask" # File mask
+      _file "/etc/portage/package.unmask" # File unmask
 	  _file "/etc/portage/package.accept_keywords" # File per unmaskare i pacchetti (il pinning di debian per capirci)
 	  _kernel
       ;;
