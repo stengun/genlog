@@ -188,7 +188,7 @@ function _osprobe {
 			INIT="init.d"
 		  fi
 		else
-		 echo "equery non presente, usa \"emerge gentoolkit\" per installarlo." # Non posso sapere se è systemd senza equery e senza dare per scontato che usi grub quindi il controllo va qui...
+		 echo "equery non presente, usa \"emerge gentoolkit\" per installarlo."
 		 _exit
 		fi
 		;;
@@ -199,11 +199,11 @@ function _osprobe {
 }
 
 function _invia {
-  local paste_url='http://paste2.org' #l'unico che non rompe con i controlli antispam e non mi costringe a spezzare il log in piu' file
-  local pastelink		      #se magari stefano ci fa paste.inforge.net ...  
+  local paste_url='http://paste2.org' 
+  local pastelink
   echo
   _prompt "Caricamento del log su paste.org - attendi..."
-  #pastelink="$(pastebinit -a '' -b $paste_url -i $log 2>/dev/null)" # funziona, evitiamo di inviare log alla cazzo per ora
+  #pastelink="$(pastebinit -a '' -b $paste_url -i $log 2>/dev/null)"
   _ok
   tput cuu 1  # in alto di una riga
   tput cuf 39  # a destra di 39
@@ -214,7 +214,6 @@ function _invia {
 
 function _upload {
   local rispondi
-  # Pastebinit è installato? // mettere in dipendenze durante la packetizzazione (idem wget)
   if [ ! -f /usr/bin/pastebinit ]; then
     printf %b "$ROSSO\n ATTENZIONE:$FINE Non è possibile inviare il log!\n Il pacchetto $BOLD'pastebinit'$FINE non è installato."
     return 1
@@ -227,7 +226,6 @@ function _upload {
 # --------------------------------------------------------------------------
 
 function _scelta {
-  # La funzione presenta un menù di scelta nel caso non sia stato passato nessun parametro
   local num
   _intro
   _bold "
@@ -563,7 +561,7 @@ function _pacman {
   local __pacexe=/usr/bin/pacman
   case $1 in
      lastupd)
-       local update=$(awk '/upgraded/ {line=$0;} END { $0=line; gsub(/[\[\]]/,"",$0); printf "%s %s",$1,$2;}' /var/log/pacman.log) #grazie mukimov
+       local update=$(awk '/upgraded/ {line=$0;} END { $0=line; gsub(/[\[\]]/,"",$0); printf "%s %s",$1,$2;}' /var/log/pacman.log) #mukimov
        local convdate=$(date -d "$update")
        echo $'\n'"Ultimo aggiornamento del sistema: ${convdate}" >> "$log"
        ;;
@@ -649,7 +647,7 @@ function _emerge {
 function _kernel {
     nome_e_riga "Kernel config"
 	_prompt "Kernel config"
-	zcat /proc/config.gz $>> "$log" && _ok || _error
+	zcat /proc/config.gz &>> "$log" && _ok || _error
 }
 
 # Funzione relativa a problemi di mount/unmount
@@ -720,7 +718,7 @@ function _file {
 }
 
 
-# Funzione relativa a problemi con le macchine virtuali (VirtualBox) # ~/VirtualBox\ VMs
+# Funzione relativa a problemi con le macchine virtuali (VirtualBox)
 function _vbox {
 	_common
 	_prompt "VM logs"
@@ -728,7 +726,7 @@ function _vbox {
 	while [ ! -d "$vboxhome" ];
 	do
 	echo
-	canclinea && _bold "Cartella Virtual Machines non trovata, inserisci il percorso (0 per uscire):"
+	canclinea && _bold "Cartella Virtual Machines non trovata, inserisci il percorso completo (0 per uscire):"
 	canclinea && read vboxhome
 	if [ $vboxhome == "0" ]; then
 	  _exit
@@ -739,7 +737,6 @@ function _vbox {
 	echo
 	canclinea && _bold "Inserisci nome macchina virtuale (Case sensitive!): "
 	canclinea && read nomevirt
-	#echo "${vboxhome}/${nomevirt}"
 	if [ -d "${vboxhome}/${nomevirt}" ]; then 
 		tput cuu 3
 		_prompt "VM logs per $nomevirt"
@@ -750,7 +747,7 @@ function _vbox {
 		done
 	else
 		_error
-		printf %b "Sembra che sul tuo sistema non siano presenti i log delle macchine virtuali!\n$ROSSO\n NOTA:$FINE genlog è configurato per rilevare i log dal path di default, se diverso copiali manualmente su http://paste2.org\n"
+		printf %b "Sembra che sul tuo sistema non siano presenti i log delle macchine virtuali!"
 
 	_exit
 
@@ -997,6 +994,7 @@ function _is_running {
 }
 
 # Funzione che "cerca" di ricavare il nome e la versione del DE/WM utilizzato
+# manca MATE, LXQT.
 function _de_wm {
   nome_e_riga "Desktop Environment - Window Manager"
   _prompt "DE/WM"
@@ -1065,9 +1063,3 @@ _scelta
 _hide
 _upload
 _exit
-
-#***********************************************************************************************************************#
-#	 Lo script originale é stato realizzato da s3v (debianizzati.org), noi lo abbiamo semplicemente implementato    	#
-#		 affinché risulti utile ed ancora più semplice da utilizzare per gli utenti di inforge.net						#
-#																														#
-#***********************************************************************************************************************#
