@@ -586,7 +586,7 @@ function _pacman {
        _comando "/usr/bin/uname -m"
        _comando "/usr/bin/testdb"
        _pack "yaourt"
-       _comando "$__pacexe -Syu -p --print-format \"%r/%n %v\""
+       _comando "$__pacexe -Syu -p --print-format=" "%r\%n %v"
        _comando "$__pacexe -Qe"
        _pacman "orfani"
        _file "/etc/pacman.conf"
@@ -632,7 +632,7 @@ function _emerge {
 	  _comando "$_emergebin --sync" # Aggiorna il portagethree
 	  _comando "$_emergebin -pauND @world" # Lista i pacchetti aggiornabili
 	  _comando "$_emergebin -pc" # Lista i pacchetti orfani
-	  _comando "$_equery list \'*\'" # Lista tutti i pacchetti installati
+	  _comando "$_equery list " "*" # Lista tutti i pacchetti installati
 	  _file "/etc/portage/package.use" # USE flags per pacchetto
 	  _file "/etc/portage/package.license" # File per includere software closed-source nel sistema
       _file "/etc/portage/package.mask" # File mask
@@ -770,15 +770,20 @@ fi
 function _comando {
   #local var=${1##*/} 
   #local var2=${1%% *} 
+  if [[ $# -eq 2 ]] && [[ "$2" != "su" ]]; then
+    local strm="$1\"$2\""
+    else
+    local strm="$1"
+  fi
   local var2=$(echo $1 | awk '{print $1}') # var2 conterrà il comando ($1) privo di eventuali opzioni ma con il path
   local pattern=$(printf '%s\n' "$var2" | sed 's/[[\.*^$/]/\\&/g')
-  local res=$(echo $1 | sed "s/^$pattern\b//g")
+  local res=$(echo $strm | sed "s/^$pattern\b//g")
   local var=$(echo "${var2##*/}${res}") # var conterrà il comando ($1) con le opzioni ma privo del path
-  nome_e_riga "$1"
+  nome_e_riga $strm
   _prompt "$var"
   
   if [ -f "$var2" ]; then # il comando esiste?
-      if [ $# -eq 2 ]; then # Se vi sono 2 parametri, viene utilizzato "su"
+      if [[ $# -eq 2 ]] && [[ "$2" == "su" ]]; then # Se vi sono 2 parametri, viene utilizzato "su"
           case "$1" in
               "/usr/bin/synclient -l")
                   # se $DISPLAY è vuota, usa :0 (default per il primo server X)
@@ -800,7 +805,7 @@ function _comando {
                       #nmcli dev list | sed -r "s/(^AP[[:digit:]]*\.SSID:[[:space:]]*).*/\1\*script removed\*/" >> "$log" && _ok || _error ;;
               *)
               # per tutti gli altri comandi non specificati sopra l'output del comando è inviato inalterato al log
-              ($1) &>> "$log" && _ok || _error
+              $1"$2" &>> "$log" && _ok || _error
           esac	  
       fi
   else
