@@ -1,0 +1,4 @@
+TODO:
+* remove the shitty compression (anyone)
+* remove the log after the upload, on _exit (anyone)
+* copy the link in the clipboard if clipboard is installed (anyone)
