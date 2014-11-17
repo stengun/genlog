@@ -1,33 +1,22 @@
-
 #!/bin/bash
 #
-#--------------------------------------------------------------------------------------------------------------------------------------------------
+#	Genlog is free software: you can redistribute it and/or modify
+#	it under the terms of the GNU General Public License as published by
+#	the Free Software Foundation, either version 3 of the License, or
+#	(at your option) any later version.
 #
-# - Stuff:
-#	
-#	- altri de (mancano mate, cinammon e qualcun altro boh poi vediamo) - xfce e openbox aggiunti
-#	- || dpkg per altre distro // vedere funzioni _firmware e _pack (se riusciamo magari prima di rilasciarlo...)
-#	- .deb (Depends: wget, pastebinit) - apt-get -f install dopo il dpkg -i oppure gli dico di usare gdebi fuffa 
+#	Genlog is distributed in the hope that it will be useful,
+#	but WITHOUT ANY WARRANTY; without even the implied warranty of
+#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#	GNU General Public License for more details.
 #
-# 									pacman -Qqe (?) 		---> sten
-#									equery list */* 		---> jacopo
-#									??? 				---> nhoya come sempre e' inutile
+#	You should have received a copy of the GNU General Public License
+#	along with genlog.  If not, see <http://www.gnu.org/licenses/>.
 #
-# - Altro:
-# 			--------------------------------------------------------------------------
-# 			 ------------ Tips per gli utenti da scrivere poi sul forum ------------
+#	Genlog is a script used for generating several kinds of logfiles and
+#       upload them on pastebin.
 #
-#				#echo "$USER ALL = NOPASSWD: /usr/bin/genlog" >> /etc/sudoers
-#				$echo "alias genlog='sudo genlog'" >> ~/.bashrc
-#
-# 			--------------------------------------------------------------------------
-#
-# 			--------------------------------------------------------------------------
-#
-# 				# Per gli utenti gentoo installare gentoolkit (equery)
-#				#emerge gentoolkit
-#				
-#
+#	Created by sten_gun, syscall and v0k3.
 
 umask 0011
 
