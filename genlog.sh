@@ -137,12 +137,12 @@ function _check {
   # Se esiste già un file di log con lo stesso nome oppure file compressi con lo
   # stesso nome di quelli che verranno creati, lo script chiede se cancellarli o meno
   local risp
-  if [ -f "$log" ] || [ -f "${log}.zip" ] || [ -f "${log}.bz2" ] || [ -f "${log}.tgz" ]; then
-    echo $'\n'"Esiste già un file ${log}, ${log}.zip, ${log}.bz2 o ${log}.tgz nella directory corrente."
+  if [ -f "$log" ]; then
+    echo $'\n'"Esiste già un file ${log} nella directory corrente."
     echo -n "Sovrascivere [S/n]? "
     read risp
     case "$risp" in
-      ""|[Ss]) rm -f -- "$log" "${log}.zip" "${log}.bz2" "${log}.tgz"  ;;
+      ""|[Ss]) rm -f -- "$log" ;;
       *)       _exit
     esac
   fi
@@ -188,7 +188,7 @@ function _invia {
   local pastelink
   echo
   _prompt "Caricamento del log su paste.org - attendi..."
-  #pastelink="$(pastebinit -a '' -b $paste_url -i $log 2>/dev/null)"
+  pastelink="$(pastebinit -a '' -b $paste_url -i $log 2>/dev/null)"
   _ok
   tput cuu 1  # in alto di una riga
   tput cuf 39  # a destra di 39
@@ -304,13 +304,10 @@ function _wait {
   echo $'\nCreazione del log in corso...\n'
 }
 
-# Funzione che stampa un messaggio che indica i file creati e poi termina lo script
+# Funzione che pulisce il file di log se presente e stampa un goodboy
 function _exit {
   if [ -f "$log" ]; then
-    echo -n $'\nFile contenente il log dello script: '
-    _bold "$log"
-  else
-    echo $'\nNon è stato creato un file di log'
+    rm -rf $log
   fi
   
   echo $'Script terminato\n'
@@ -325,8 +322,10 @@ function _exit {
 function _common {
   if [ $ID != "gentoo" ]; then
     local _lspci="/usr/bin/lspci"
+    local _groups="/usr/bin/groups"
   else
     local _lspci="/usr/sbin/lspci"
+    local _groups="/bin/groups"
   fi
   
   _data
@@ -335,7 +334,7 @@ function _common {
   _file "/etc/os-release"
   _de_wm
   _file "/etc/X11/default-display-manager"
-  _comando "/usr/bin/groups" "su"
+  _comando "$_groups" "su"
   _file "/var/log/syslog"
   _comando "/bin/dmesg -l err"
   _comando "/bin/dmesg -l warn"

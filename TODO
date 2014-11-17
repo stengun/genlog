@@ -1,4 +1,11 @@
 TODO:
-* remove the shitty compression (anyone)
-* remove the log after the upload, on _exit (anyone)
-* copy the link in the clipboard if clipboard is installed (anyone)
+[*] manage the optionals dependency (anyone)
+[*] remove the needed dependency from the script (anyone)
+[*] copy the link in the clipboard if clipboard is installed (anyone)
+[*] force to don't remove the log from disk (anyone)
+
+DONE:
+[+] remove the log after the upload, on _exit (v0k3)
+[+] enabled the automatic upload (v0k3)
+[+] fix groups for gentoo (v0k3)
+[+] remove the shitty compression (v0k3)
