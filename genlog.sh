@@ -1,5 +1,10 @@
 #!/bin/bash
 #
+#	Genlog is a script used for generating several kinds of logfiles and
+#       upload them on pastebin.
+#
+#	Copyright (C) 2014 sten_gun, syscall, v0k3.
+#
 #	Genlog is free software: you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
 #	the Free Software Foundation, either version 3 of the License, or
@@ -13,10 +18,6 @@
 #	You should have received a copy of the GNU General Public License
 #	along with genlog.  If not, see <http://www.gnu.org/licenses/>.
 #
-#	Genlog is a script used for generating several kinds of logfiles and
-#       upload them on pastebin.
-#
-#	Created by sten_gun, syscall and v0k3.
 
 umask 0011
 
