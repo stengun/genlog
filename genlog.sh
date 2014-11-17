@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 #	Genlog is a script used for generating several kinds of logfiles and
-#       upload them on pastebin.
+#       automatic upload them on pastebin.
 #
 #	Copyright (C) 2014 sten_gun, syscall, v0k3.
 #
@@ -164,26 +164,21 @@ function _osprobe {
 	      INIT="systemd"
 	    else
 	      INIT="init.d"  
-          readonly STABLE="wheezy"
-          readonly TESTING="jessie"
+              readonly STABLE="wheezy"
+              readonly TESTING="jessie"
 	    fi
 	    ;;
 	  gentoo)
-	    _packageman=_emerge
-	    if [ -f "/usr/bin/equery" ]; then
-		  $_packageman "ricercalocale" "systemd" 2&>1 /dev/null
-		  if [ $? -eq 0 ]; then
-		    INIT="systemd"
-		  else
-			INIT="init.d"
-		  fi
-		else
-		 echo "equery non presente, usa \"emerge gentoolkit\" per installarlo."
-		 _exit
-		fi
-		;;
+	    _packageman=_portage
+	    $_packageman "ricercalocale" "systemd" 2&>1 /dev/null
+	      if [ $? -eq 0 ]; then
+	        INIT="systemd"
+	      else
+		INIT="init.d"
+	      fi
+	    ;;
 	  *)
-	    echo "sistema non supportato"
+	    echo "Sistema non supportato, se vuoi estendere il supporto alla tua distro forka il progetto su gitorious e poi manda il pull del commit al master branch!"
 	    _exit
 	esac
 }
@@ -588,7 +583,7 @@ function _pacman {
 }
 
 # Funzione per gestire i sistemi che usano portage
-function _emerge {
+function _portage {
   local _emergebin=/usr/bin/emerge
   local _equery=/usr/bin/equery
   case $1 in
@@ -605,33 +600,29 @@ function _emerge {
 	  fi
 	  ;;
 	ricercalocale)
-	  if [ -f "$_equery" ]; then
-		if [ $2 ]; then
-		  $_equery list $2
-		else
-		  echo "aggiungi il nome del pacchetto da cercare come argomento"
-		fi
-	  else
-	    _error "\"gentoolkit\" non presente nel sistema!!!"
-	  fi
-      ;;
+	    if [ $2 ]; then
+	      $_equery list "*" | grep $2
+	    else
+	      echo "aggiungi il nome del pacchetto da cercare come argomento"
+	    fi
+      	  ;;
     check)
-	  _emerge "lastupd"
+	  _portage "lastupd"
 	  _common
 	  _comando "$_emergebin --info" # Un sacco di cose utili, incluso il make.conf e l'architettura del sistema (uname -m)
+	  _file "/etc/portage/package.use" # USE flags per pacchetto
+	  _file "/etc/portage/package.license" # File per includere software closed-source nel sistema
+          _file "/etc/portage/package.mask" # File mask
+          _file "/etc/portage/package.unmask" # File unmask
+	  _file "/etc/portage/package.accept_keywords" # File per unmaskare i pacchetti (il pinning di debian per capirci)
 	  _comando "$_emergebin --sync" # Aggiorna il portagethree
 	  _comando "$_emergebin -pauND @world" # Lista i pacchetti aggiornabili
 	  _comando "$_emergebin -pc" # Lista i pacchetti orfani
 	  _comando "$_equery list " "*" # Lista tutti i pacchetti installati
-	  _file "/etc/portage/package.use" # USE flags per pacchetto
-	  _file "/etc/portage/package.license" # File per includere software closed-source nel sistema
-      _file "/etc/portage/package.mask" # File mask
-      _file "/etc/portage/package.unmask" # File unmask
-	  _file "/etc/portage/package.accept_keywords" # File per unmaskare i pacchetti (il pinning di debian per capirci)
 	  _kernel
       ;;
     *)
-      echo "specifica un comando per la funzione _emerge"
+      echo "specifica un comando per la funzione _portage"
   esac
 }
 
