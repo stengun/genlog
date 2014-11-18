@@ -88,6 +88,12 @@ readonly GIALLO="\033[00;33m"
 readonly BOLD="\033[01m"
 readonly FINE="\033[0m"
 
+function canclinea {
+    tput sc
+    tput el
+    tput rc
+}
+
 function _intro {
   clear  
   printf %b "$BLU
