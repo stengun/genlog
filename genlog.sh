@@ -76,8 +76,6 @@ utente=$(logname) &&
   unset tmputente
 }
 readonly utente
-
-# nome host
 readonly nomehost=$(hostname)
 readonly log="/tmp/Inforge_GNULinux-$(date +%d%b_%H%M%S).log"
 
@@ -128,7 +126,8 @@ Per l'esecuzione di questo script è consigliabile soddisfare le seguenti dipend
 #     _pack "usbutils" "nolog"
 #  fi
 
-  _pack "xclip" "nolog" # for automatic copying in the clipboard
+  _pack "xclip" "nolog" # for automatic copying in the clipboar
+  xclip_installed=$?
   _bold "Continuare l'esecuzione [S/n]? "
   read rispondi
   case $rispondi in
@@ -196,12 +195,16 @@ function _invia {
   local paste_url='http://paste2.org' 
   local pastelink
   echo
-  _prompt "Caricamento del log in corso - attendi..."
+  _prompt "Caricamento del log in corso ...."
   pastelink="$(pastebinit -a '' -b $paste_url -i $log 2>/dev/null)"
   _ok
   tput cuu 1  # in alto di una riga
   tput cuf 39  # a destra di 39
   printf %b "$VERDE$BOLD Fatto!$BLU link ->$FINE " $pastelink
+  if [ $xclip_installed ]; then
+    echo "$pastelink" | xclip -selection clipboard
+    printf %b "$VERDE$BOLD \n Xclip$FINE installato!!$BLU$BOLD Link automaticamente copiato negli appunti!$FINE"
+  fi
   echo
   printf %b "$ROSSO$BOLD \n RICORDA:$FINE Non dimenticare di postare il link nel tuo thread dedicato su inforge!$FINE"
 }
@@ -247,7 +250,7 @@ Selezionare il tipo di problema per il quale verrà generato il file di log"
             5)	echo $'### Problemi mount-unmount ###\n'      > "$log" && _mount  ;;&
             6)	echo $'### Problemi touchpad ###\n'           > "$log" && _tpad   ;;&
             7)  echo $'### Problemi virtualbox ###\n'	      > "$log" && _vbox   ;;&
-            8)	echo $'### Solo informazioni generiche ###\n' > "$log" && _common && _kernel ;;&
+            8)	echo $'### Solo informazioni generiche ###\n' > "$log" && _common ;;&
         [1-8])	break   ;; # Termina il ciclo 'while'
             0)	_exit   ;; # È stato inserito '0' . Uscita dallo script
             *)	# Tutti gli altri caratteri. Cancella l'input immesso e ripete la domanda
@@ -637,8 +640,8 @@ function _portage {
 # Scrive il .config del kernel corrente nel log
 function _kernel {
     nome_e_riga "Kernel config"
-	_prompt "Kernel config"
-	zcat /proc/config.gz &>> "$log" && _ok || _error
+    _prompt "Kernel config"
+    zcat /proc/config.gz &>> "$log" && _ok || _error
 }
 
 # Funzione relativa a problemi di mount/unmount
@@ -868,12 +871,14 @@ function _pack {
      else
        _error
      fi
+     return 1
   else
      if [ "$2" != "nolog" ]; then
        echo "$packages" >> "$log" && _ok
      else
        _ok
      fi
+     return 0
   fi
 }
 
