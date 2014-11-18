@@ -119,13 +119,16 @@ function _avvertenze {
 
 Per l'esecuzione di questo script è consigliabile soddisfare le seguenti dipendenze:
 "
-  _pack "wget" "nolog"
-  _pack "pastebinit" "nolog"
-  if [ $ID == "gentoo" ]; then
-     _pack "pciutils" "nolog"
-     _pack "usbutils" "nolog"
-  fi
-  
+## Removed the 'must-have' dependencies
+#
+#  _pack "wget" "nolog"
+#  _pack "pastebinit" "nolog"
+#  if [ $ID == "gentoo" ]; then
+#     _pack "pciutils" "nolog"
+#     _pack "usbutils" "nolog"
+#  fi
+
+  _pack "xclip" "nolog" # for automatic copying in the clipboard
   _bold "Continuare l'esecuzione [S/n]? "
   read rispondi
   case $rispondi in

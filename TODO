@@ -1,7 +1,5 @@
 TODO:
 [*] list all the VM'S in _vbox function (sten_gun)
-[*] remove the needed dependency from the script (anyone)
-[*] manage the optionals dependency (anyone)
 [*] copy the link in the clipboard if xclip is installed (anyone)
 [*] force to don't remove the log from disk (anyone)
 
@@ -11,3 +9,5 @@ DONE:
 [+] fix groups for gentoo (v0k3)
 [+] remove the shitty compression (v0k3)
 [+] fix canclinea (syscall)
+[+] remove the needed dependency from the script (v0k3)
+[+] manage the optionals dependency (v0k3)
