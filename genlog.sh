@@ -193,7 +193,7 @@ function _invia {
   local paste_url='http://paste2.org' 
   local pastelink
   echo
-  _prompt "Caricamento del log su paste.org - attendi..."
+  _prompt "Caricamento del log in corso - attendi..."
   pastelink="$(pastebinit -a '' -b $paste_url -i $log 2>/dev/null)"
   _ok
   tput cuu 1  # in alto di una riga
@@ -243,8 +243,8 @@ Selezionare il tipo di problema per il quale verrà generato il file di log"
             4)	echo $'### Problemi package manager ###\n'    > "$log" && $_packageman "check"    ;;&
             5)	echo $'### Problemi mount-unmount ###\n'      > "$log" && _mount  ;;&
             6)	echo $'### Problemi touchpad ###\n'           > "$log" && _tpad   ;;&
-            7)  echo $'### Problemi virtualbox ###\n'		  > "$log" && _vbox   ;;&
-            8)	echo $'### Solo informazioni generiche ###\n' > "$log" && _common ;;&
+            7)  echo $'### Problemi virtualbox ###\n'	      > "$log" && _vbox   ;;&
+            8)	echo $'### Solo informazioni generiche ###\n' > "$log" && _common && _kernel ;;&
         [1-8])	break   ;; # Termina il ciclo 'while'
             0)	_exit   ;; # È stato inserito '0' . Uscita dallo script
             *)	# Tutti gli altri caratteri. Cancella l'input immesso e ripete la domanda
