@@ -196,12 +196,12 @@ function _invia {
   local pastelink
   echo
   _prompt "Caricamento del log in corso ...."
-  pastelink="$(pastebinit -a '' -b $paste_url -i $log 2>/dev/null)"
+  #pastelink="$(pastebinit -a '' -b $paste_url -i $log 2>/dev/null)"
   _ok
   tput cuu 1  # in alto di una riga
   tput cuf 39  # a destra di 39
   printf %b "$VERDE$BOLD Fatto!$BLU link ->$FINE " $pastelink
-  if [ $xclip_installed ]; then
+  if [ $xclip_installed -eq 1 ]; then
     echo "$pastelink" | xclip -selection clipboard
     printf %b "$VERDE$BOLD \n Xclip$FINE installato!!$BLU$BOLD Link automaticamente copiato negli appunti!$FINE"
   fi
@@ -871,14 +871,14 @@ function _pack {
      else
        _error
      fi
-     return 1
+     return 0
   else
      if [ "$2" != "nolog" ]; then
        echo "$packages" >> "$log" && _ok
      else
        _ok
      fi
-     return 0
+     return 1
   fi
 }
 
