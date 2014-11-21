@@ -359,7 +359,6 @@ function _common {
   _comando "/bin/df"
   _firmware
   _pack "linux-headers"
-  _pack "linux-image"
 }
 
 # Funzione relativa ai problemi di rete
@@ -381,8 +380,6 @@ function _rete {
   _pack "DHCP"
   _file "/etc/dhclient.conf"
   _file "/etc/NetworkManager/NetworkManager.conf"
-  _comando "/usr/bin/nmcli dev list"
-  _comando "/usr/bin/nmcli device show"
   _demone "/usr/sbin/NetworkManager" "Network Manager"
   _demone "/usr/sbin/wicd" "Wicd"
 }
