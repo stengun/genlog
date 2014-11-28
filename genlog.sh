@@ -1,7 +1,10 @@
 #!/bin/bash
 #
-#	Genlog is a script used for generating several kinds of logfiles and
-#       automatic upload them on pastebin.
+#	
+# Bash script that generates logs for addressing common problems on a 
+# GNU/Linux machine running Arch linux, Debian, Gentoo or derivative.
+# Generated logs are uploaded to a free paste service and a link for the
+# uploaded paste is provided, ready for use on forums when asking for help.
 #
 #	Copyright (C) 2014 sten_gun, syscall, v0k3.
 #
@@ -322,7 +325,7 @@ function _wait {
   echo $'\nCreazione del log in corso...\n'
 }
 
-# Funzione che pulisce il file di log se presente e stampa un goodboy
+# Funzione che pulisce il file di log se presente e stampa un goodbye
 function _exit {
   echo
   if [ -f "$log" ]; then
