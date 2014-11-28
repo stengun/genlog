@@ -714,41 +714,69 @@ function _file {
     fi
 }
 
-
 # Funzione relativa a problemi con le macchine virtuali (VirtualBox)
 function _vbox {
 	_common
 	_prompt "VM logs"
 	local vboxhome=/home/$utente/VirtualBox\ VMs
-	while [ ! -d "$vboxhome" ];
-	do
-	echo
-	canclinea && _bold "Cartella Virtual Machines non trovata, inserisci il percorso completo (0 per uscire):"
-	canclinea && read vboxhome
-	if [ $vboxhome == "0" ]; then
-	  _exit
-	fi
-	tput cuu 3
+    local state=_ok
+    echo
+	while [ ! -d "$vboxhome" ]; do
+      tput ed
+	  _bold "Cartella Virtual Machines non trovata"
+      _bold "inserisci il percorso completo (0 per uscire):"
+	  read vboxhome
+	  if [ "$vboxhome" == "0" ]; then
+	    _exit
+	  fi
+	  tput cuu 3
 	done
-	local nomevirt
-	echo
-	canclinea && _bold "Inserisci nome macchina virtuale (Case sensitive!): "
-	canclinea && read nomevirt
-	if [ -d "${vboxhome}/${nomevirt}" ]; then 
-		tput cuu 3
-		_prompt "VM logs per $nomevirt"
-		_ok
-		tput cud 1
-		for nome_file_logvbox in  "${vboxhome}/$nomevirt"/Logs/VBox.log*; do
-			_file "$nome_file_logvbox"
-		done
-	else
-		_error
-		printf %b "Sembra che sul tuo sistema non siano presenti i log delle macchine virtuali!"
+    
+    tput ed
+    local menuentries
+    local indx=0
+	_bold "Macchine virtuali rilevate:"
+    for file in "$vboxhome/"*; do
+      if [ ! -d "$file" ]; then
+        continue
+      fi
+      menuentries[indx++]="$file"
+      echo "     [$indx] $file"
+    done
+    local numvirt=-1
+    while [ $numvirt -lt 0 -o $numvirt -gt $indx ]; do
+      tput ed
+	  _bold "Inserisci scelta (0 per annullare): "
+	  read numvirt
+      if [ -z $numvirt ]; then
+        numvirt=-1
+      fi
+      if [ $numvirt == "0" ]; then
+        state=_error
+        tput cuu 2
+        break
+      fi
+      tput cuu 2
+    done
+    
+    tput cuu $[${#menuentries[*]} + 2]
+    tput ed
+    if [ "$numvirt" != "0" ]; then
+      let numvirt=numvirt-1
+      nomevirt=${menuentries[numvirt]}
+      _prompt "VM logs per $nomevirt"
+    else
+      _prompt "VM logs"
+    fi
 
-	_exit
-
-fi
+    $state
+    if [ "$state" == "_error" ]; then
+      return
+    fi
+    tput cud 1
+    for nome_file_logvbox in  "$nomevirt"/Logs/VBox.log*; do
+        _file "$nome_file_logvbox"
+    done
 
 }
 
