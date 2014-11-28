@@ -1,8 +1,10 @@
 TODO:
-[*] list all the VM'S in _vbox function (sten_gun)
-[*] force to don't remove the log from disk (anyone)
+[ ] Systemd specific tests (sten_gun)
+[ ] Fedora related tests (not assigned yet)
 
 DONE:
+[+] list all the VM'S in _vbox function (sten_gun)
+[+] force to don't remove the log from disk (sten_gun)
 [+] copy the link in the clipboard if xclip is installed (v0k3)
 [+] remove the log after the upload, on _exit (v0k3)
 [+] enabled the automatic upload (v0k3)

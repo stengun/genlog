@@ -196,7 +196,7 @@ function _invia {
   local pastelink
   echo
   _prompt "Caricamento del log in corso ...."
-  #pastelink="$(pastebinit -a '' -b $paste_url -i $log 2>/dev/null)"
+  pastelink="$(pastebinit -a '' -b $paste_url -i $log 2>/dev/null)"
   _ok
   tput cuu 1  # in alto di una riga
   tput cuf 39  # a destra di 39
@@ -210,12 +210,18 @@ function _invia {
 }
 
 function _upload {
+  echo
   local rispondi
-  if [ ! -f /usr/bin/pastebinit ]; then
-    printf %b "$ROSSO\n ATTENZIONE:$FINE Non è possibile inviare il log!\n Il pacchetto $BOLD'pastebinit'$FINE non è installato."
-    return 1
-  fi
-      _invia
+  _bold "Inviare il file di log? [S/n]"
+  read rispondi
+  case $rispondi in
+    ""|[Ss]) if [ ! -f /usr/bin/pastebinit ]; then
+          printf %b "$ROSSO\n ATTENZIONE:$FINE Non è possibile inviare il log!\n Il pacchetto $BOLD'pastebinit'$FINE non è installato."
+          return 1
+        fi
+        tput cuu 1
+        _invia ;;
+  esac
 }
 
 # --------------------------------------------------------------------------
@@ -318,8 +324,14 @@ function _wait {
 
 # Funzione che pulisce il file di log se presente e stampa un goodboy
 function _exit {
+  echo
   if [ -f "$log" ]; then
-    rm -rf $log
+    _bold "Rimuovere il log $log [S/n]? "
+    read rispondi
+    case $rispondi in
+      ""|[Ss]) rm -rf $log 
+               echo "file rimosso" ;;
+    esac
   fi
   
   echo $'Script terminato\n'
