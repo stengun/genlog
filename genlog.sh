@@ -760,14 +760,15 @@ function _vbox {
       tput ed
 	  _bold "Inserisci scelta (0 per annullare): "
 	  read numvirt
-      if [ -z $numvirt ]; then
-        numvirt=-1
-      fi
-      if [ $numvirt == "0" ]; then
-        state=_error
-        tput cuu 2
-        break
-      fi
+      case $numvirt in
+        [0-100])
+          if [ $numvirt == "0" ]; then
+            state=_error
+            tput cuu 2
+            break
+          fi ;;
+        *) numvirt=-1
+      esac
       tput cuu 2
     done
     
