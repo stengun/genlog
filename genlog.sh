@@ -329,11 +329,12 @@ function _wait {
 function _exit {
   echo
   if [ -f "$log" ]; then
-    _bold "Rimuovere il log $log [S/n]? "
+    _bold "Rimuovere il log dal sistema? [S/n] "
     read rispondi
     case $rispondi in
       ""|[Ss]) rm -rf $log 
-               echo "file rimosso" ;;
+               echo "Log rimosso" ;;
+      *) _bold "Log salvato in $log"
     esac
   fi
   
@@ -549,6 +550,7 @@ function _apt {
       _common
       _dir "/etc/apt/sources.list.d/"
       _file "/etc/apt/sources.list"
+      _apt "extpack"
       _comando "$_aptcache policy"
       _comando "$_aptcache stats"
       _comando "$_aptget check"
