@@ -820,7 +820,7 @@ function _comando {
   local pattern=$(printf '%s\n' "$var2" | sed 's/[[\.*^$/]/\\&/g')
   local res=$(echo $strm | sed "s/^$pattern\b//g")
   local var=$(echo "${var2##*/}${res}") # var conterrà il comando ($1) con le opzioni ma privo del path
-  nome_e_riga $strm
+  nome_e_riga "$strm"
   _prompt "$var"
   
   if [ -f "$var2" ]; then # il comando esiste?
