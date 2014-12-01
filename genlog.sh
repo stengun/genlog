@@ -103,7 +103,7 @@ function _intro {
 		| | | | |  _| (_) | | | (_| |  __/_| | | |  __/ |_      
 		|_|_| |_|_|  \___/|_|  \__, |\___(_)_| |_|\___|\__|		   	
 				       |___/                 	   
-						genlog v0 $FINE 
+						genlog v1.0 $FINE 
 			    $VERDE[Per gli utenti della sez. GNU/Linux]$FINE
 	   
 	            $BOLD Compatibile con Gentoo, Arch Linux, Debian e derivate.$FINE		   
