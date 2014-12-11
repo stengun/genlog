@@ -181,12 +181,12 @@ function _osprobe {
 	    ;;
 	  gentoo)
 	    _packageman=_portage
-	    #$_packageman "ricercalocale" "systemd" 2&>1 /dev/null
-	    #  if [ $? -eq 0 ]; then
-	    #    INIT="systemd"
-	    #  else
-		#INIT="init.d"
-	    #  fi
+	    $_packageman "ricercalocale" "systemd" 2&> /dev/null
+	      if [ $? -eq 0 ]; then
+	        INIT="systemd"
+	      else
+            INIT="init.d"
+	      fi
 	    ;;
 	  *)
 	    echo "Sistema non supportato, se vuoi estendere il supporto alla tua distro forka il progetto su gitorious e poi manda il pull del commit al master branch!"
