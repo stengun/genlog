@@ -1106,9 +1106,9 @@ function _hide {
 
 clear
 _osprobe
+_check
 _intro
 _avvertenze
-_check
 _scelta
 _hide
 _upload
