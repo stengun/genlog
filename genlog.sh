@@ -118,19 +118,15 @@ function _avvertenze {
            AUTOMATICAMENTE$FINE al sito paste2.org fornendoti un link da inserire	
                  successivamente sulla tua discussione in inforge.net
 
-Per l'esecuzione di questo script è consigliabile soddisfare le seguenti dipendenze:
-"
-## Removed the 'must-have' dependencies
-#
-#  _pack "wget" "nolog"
-#  _pack "pastebinit" "nolog"
-#  if [ $ID == "gentoo" ]; then
-#     _pack "pciutils" "nolog"
-#     _pack "usbutils" "nolog"
-#  fi
 
+"
   _pack "xclip" "nolog" # for automatic copying in the clipboar
   xclip_installed=$?
+  if [ $xclip_installed -le 0 ]; then
+  tput cuu 2
+  printf %b "Per l'esecuzione di questo script è consigliabile soddisfare le seguenti dipendenze:\n"
+  tput cud 2
+  fi
   _bold "Continuare l'esecuzione [S/n]? "
   read rispondi
   case $rispondi in
@@ -918,6 +914,9 @@ function _pack {
   if [ -z "$packages" ]; then
      if [ "$2" != "nolog" ]; then
        echo "Nessun pacchetto installato" >> "$log" && _error
+     else
+       _prompt "$1"
+       _error
      fi
      return 0
   else
