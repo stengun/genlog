@@ -908,8 +908,9 @@ function _dir {
 function _pack {
   if [ "$2" != "nolog" ]; then
     nome_e_riga "Pacchetti che contengono \"$1\""
+    _prompt "$1"
   fi
-  _prompt "$1"
+  
 
   # Variabile che contiene i pacchetti trovati
   local packages=$($_packageman "ricercalocale" "$1")
@@ -917,15 +918,11 @@ function _pack {
   if [ -z "$packages" ]; then
      if [ "$2" != "nolog" ]; then
        echo "Nessun pacchetto installato" >> "$log" && _error
-     else
-       _error
      fi
      return 0
   else
      if [ "$2" != "nolog" ]; then
        echo "$packages" >> "$log" && _ok
-     else
-       _ok
      fi
      return 1
   fi
