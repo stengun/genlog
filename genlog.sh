@@ -122,10 +122,10 @@ function _avvertenze {
 "
   _pack "xclip" "nolog" # for automatic copying in the clipboar
   xclip_installed=$?
-  if [ $xclip_installed -le 0 ]; then
-  tput cuu 2
-  printf %b "Per l'esecuzione di questo script è consigliabile soddisfare le seguenti dipendenze:\n"
-  tput cud 2
+  if [ $xclip_installed -lt 1 ]; then
+    tput cuu 2
+    printf %b "Per l'esecuzione di questo script è consigliabile soddisfare le seguenti dipendenze:\n"
+    tput cud 2
   fi
   _bold "Continuare l'esecuzione [S/n]? "
   read rispondi
