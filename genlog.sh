@@ -145,7 +145,7 @@ function _check {
   # stesso nome di quelli che verranno creati, lo script chiede se cancellarli o meno
   local risp
   if [ -f "$log" ]; then
-    echo $'\n'"Esiste già un file ${log} nella directory corrente."
+    echo $'\n'"Un logfile ${log} esiste già."
     echo -n "Sovrascivere [S/n]? "
     read risp
     case "$risp" in
@@ -153,6 +153,34 @@ function _check {
       *)       _exit
     esac
   fi
+}
+
+#Funzione che permette di rilevare il package manager in uso dal sistema se quest'ultimo non è supportato.
+function _pkgprobe {
+    which pacman > /dev/null
+    if [ $? -eq 0 ]; then
+        _packageman=_pacman
+        echo "Package manager rilevato: Pacman" >> "$log"
+        return
+    fi
+    which apt-get > /dev/null
+    if [ $? -eq 0 ]; then
+        _packageman=_apt
+        echo "Package manager rilevato: APT" >> "$log"
+        return
+    fi
+    which emerge > /dev/null
+    if [ $? -eq 0 ]; then
+        _packageman=_portage
+        echo "Package manager rilevato: Emerge" >> "$log"
+        return
+    fi
+#    which yum
+#    if [ $? -eq 0 ]; then
+#        _packageman=_yum
+#        echo "Package manager rilevato: YUM" >> "$log"
+#        return
+#    fi
 }
 
 # Rileva la distribuzione corrente tramite /etc/os-release e imposta la
@@ -178,15 +206,37 @@ function _osprobe {
 	  gentoo)
 	    _packageman=_portage
 	    $_packageman "ricercalocale" "systemd" 2&> /dev/null
-	      if [ $? -eq 0 ]; then
-	        INIT="systemd"
-	      else
+        if [ $? -eq 0 ]; then
+            INIT="systemd"
+        else
             INIT="init.d"
-	      fi
+        fi
 	    ;;
 	  *)
-	    echo "Sistema non supportato, se vuoi estendere il supporto alla tua distro forka il progetto su gitorious e poi manda il pull del commit al master branch!"
-	    _exit
+            printf %b "${ROSSO}${BOLD}
+Sistema non ufficialmente supportato
+${GIALLO}puoi comunque generare i log ma lo script potrebbe non funzionare correttamente.${FINE}
+"
+            nome_e_riga "Modalità non supportata"
+            echo "Distribuzione (da os-release): $ID" >> "$log"
+            echo "Versione: $VERSION_ID" >> "$log"
+            _pkgprobe
+            $_packageman "ricercalocale" "systemd" 2&> /dev/null
+            if [ $? -eq 0 ]; then
+                INIT="systemd"
+            else
+                INIT="init.d"
+            fi
+            echo "INIT sysyem rilevato: $INIT" >> "$log"
+            local risp
+            _bold $'\n'"Continuare? [S/n] "
+            read risp
+            case "$risp" in
+                ""|[Ss]) break;;
+                *)       _exit
+            esac
+        ;;
+        
 	esac
 }
 
@@ -642,7 +692,7 @@ function _portage {
           _file "/etc/portage/package.mask" # File mask
           _file "/etc/portage/package.unmask" # File unmask
 	  _file "/etc/portage/package.accept_keywords" # File per unmaskare i pacchetti (il pinning di debian per capirci)
-	  _comando "$_emergebin --sync" # Aggiorna il portagethree
+	  _comando "$_emergebin --sync" # Aggiorna il portagetree
 	  _comando "$_emergebin -pauND @world" # Lista i pacchetti aggiornabili
 	  _comando "$_emergebin -pc" # Lista i pacchetti orfani
 	  _comando "$_equery list " "*" # Lista tutti i pacchetti installati
@@ -1100,9 +1150,8 @@ function _hide {
 # Main
 # --------------------------------------------------------------------------
 
-
-_osprobe
 _check
+_osprobe
 clear
 _intro
 _avvertenze
