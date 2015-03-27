@@ -153,6 +153,7 @@ function _check {
       *)       _exit
     esac
   fi
+  touch $log
 }
 
 #Funzione che permette di rilevare il package manager in uso dal sistema se quest'ultimo non è supportato.
@@ -186,56 +187,56 @@ function _pkgprobe {
 # Rileva la distribuzione corrente tramite /etc/os-release e imposta la
 # funzione per il package manager e alcune variabili di sistema, se necessario.
 function _osprobe {
-	ID=$(sed -n 's/^ID=//p' /etc/os-release)
-	VERSION_ID=$(sed -n 's/^VERSION_ID=//p' /etc/os-release)
-	case $ID in
-	  arch)
-	    _packageman=_pacman
-	    INIT="systemd"
-	    ;;
-	  debian)
-	    _packageman=_apt
-	    if [ $VERSION_ID -gt 7 ]; then
-	      INIT="systemd"
-	    else
-	      INIT="init.d"  
-              readonly STABLE="wheezy"
-              readonly TESTING="jessie"
-	    fi
-	    ;;
-	  gentoo)
-	    _packageman=_portage
-	    $_packageman "ricercalocale" "systemd" 2&> /dev/null
-        if [ $? -eq 0 ]; then
-            INIT="systemd"
-        else
-            INIT="init.d"
-        fi
-	    ;;
-	  *)
-            printf %b "${ROSSO}${BOLD}
+        ID=$(sed -n 's/^ID=//p' /etc/os-release)
+        VERSION_ID=$(sed -n 's/^VERSION_ID=//p' /etc/os-release)
+        case $ID in
+          arch)
+                _packageman=_pacman
+                INIT="systemd"
+            ;;
+          debian)
+                _packageman=_apt
+                if [ $VERSION_ID -gt 7 ]; then
+                  INIT="systemd"
+                else
+                  INIT="init.d"  
+                      readonly STABLE="wheezy"
+                      readonly TESTING="jessie"
+                fi
+            ;;
+          gentoo)
+                _packageman=_portage
+                $_packageman "ricercalocale" "systemd" 2&> /dev/null
+                if [ $? -eq 0 ]; then
+                    INIT="systemd"
+                else
+                    INIT="init.d"
+                fi
+            ;;
+          *)
+                printf %b "${ROSSO}${BOLD}
 Sistema non ufficialmente supportato
 ${GIALLO}puoi comunque generare i log ma lo script potrebbe non funzionare correttamente.${FINE}
 "
-            nome_e_riga "Modalità non supportata"
-            echo "Distribuzione (da os-release): $ID" >> "$log"
-            echo "Versione: $VERSION_ID" >> "$log"
-            _pkgprobe
-            $_packageman "ricercalocale" "systemd" 2&> /dev/null
-            if [ $? -eq 0 ]; then
-                INIT="systemd"
-            else
-                INIT="init.d"
-            fi
-            echo "INIT sysyem rilevato: $INIT" >> "$log"
-            local risp
-            _bold $'\n'"Continuare? [S/n] "
-            read risp
-            case "$risp" in
-                ""|[Ss]) break;;
-                *)       _exit
-            esac
-        ;;
+                echo "### Distribuzione non supportata ###" >> "$log"
+                echo "Distribuzione (da os-release): $ID" >> "$log"
+                echo "Versione: $VERSION_ID" >> "$log"
+                _pkgprobe
+                $_packageman "ricercalocale" "systemd" 2&> /dev/null
+                if [ $? -eq 0 ]; then
+                    INIT="systemd"
+                else
+                    INIT="init.d"
+                fi
+                echo "INIT sysyem rilevato: $INIT" >> "$log"
+                local risp
+                _bold $'\n'"Continuare? [S/n] "
+                read risp
+                case "$risp" in
+                    ""|[Ss]) break;;
+                    *)       _exit
+                esac
+            ;;
         
 	esac
 }
@@ -298,14 +299,14 @@ Selezionare il tipo di problema per il quale verrà generato il file di log"
     read num
     case "$num" in
         [1-8])	_wait   ;;& # ;;& -> va alla successiva occorrenza del carattere immesso
-            1)	echo $'### Problemi di rete ###\n'            > "$log" && _rete   ;;&
-            2)	echo $'### Problemi video ###\n'              > "$log" && _video  ;;&
-            3)	echo $'### Problemi audio ###\n'              > "$log" && _audio  ;;&
-            4)	echo $'### Problemi package manager ###\n'    > "$log" && $_packageman "check"    ;;&
-            5)	echo $'### Problemi mount-unmount ###\n'      > "$log" && _mount  ;;&
-            6)	echo $'### Problemi touchpad ###\n'           > "$log" && _tpad   ;;&
-            7)  echo $'### Problemi virtualbox ###\n'	      > "$log" && _vbox   ;;&
-            8)	echo $'### Solo informazioni generiche ###\n' > "$log" && _common ;;&
+            1)	echo $'### Problemi di rete ###\n'            >> "$log" && _rete   ;;&
+            2)	echo $'### Problemi video ###\n'              >> "$log" && _video  ;;&
+            3)	echo $'### Problemi audio ###\n'              >> "$log" && _audio  ;;&
+            4)	echo $'### Problemi package manager ###\n'    >> "$log" && $_packageman "check"    ;;&
+            5)	echo $'### Problemi mount-unmount ###\n'      >> "$log" && _mount  ;;&
+            6)	echo $'### Problemi touchpad ###\n'           >> "$log" && _tpad   ;;&
+            7)  echo $'### Problemi virtualbox ###\n'	      >> "$log" && _vbox   ;;&
+            8)	echo $'### Solo informazioni generiche ###\n' >> "$log" && _common ;;&
         [1-8])	break   ;; # Termina il ciclo 'while'
             0)	_exit   ;; # È stato inserito '0' . Uscita dallo script
             *)	# Tutti gli altri caratteri. Cancella l'input immesso e ripete la domanda
@@ -1152,7 +1153,6 @@ function _hide {
 
 _check
 _osprobe
-clear
 _intro
 _avvertenze
 _scelta
