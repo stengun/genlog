@@ -161,7 +161,7 @@ function _osprobe {
 	ID=$(sed -n 's/^ID=//p' /etc/os-release)
 	VERSION_ID=$(sed -n 's/^VERSION_ID=//p' /etc/os-release)
 	case $ID in
-	  arch)
+	  arch|manjaro)
 	    _packageman=_pacman
 	    INIT="systemd"
 	    ;;
@@ -404,6 +404,7 @@ function _video {
   _common
   _file "/etc/X11/xorg.conf"
   _dir "/etc/X11/xorg.conf.d/"
+  _dir "/etc/bumblebee/"
   _file "/var/log/Xorg.0.log"
   _comando "/usr/sbin/dkms status"
   _pack "xorg"
